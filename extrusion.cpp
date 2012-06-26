@@ -7,6 +7,7 @@
 #  include <GLUT/glut.h>
 #else
 #  include <GL/glut.h>
+#  define CALLBACK
 #endif
 
 #include "extrusion.h"
