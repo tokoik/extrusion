@@ -1,23 +1,13 @@
-#include <math.h>
+ï»¿#include <math.h>
 #include <stdlib.h>
-#if defined(WIN32)
-#  pragma warning(disable:4819)
-//#  pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
-#  include "glut.h"
-#elif defined(X11)
-#  include <GL/glut.h>
-#elif defined(__APPLE__)
-#  include <GLUT/glut.h>
-#else
-#  error "This platform is not supported."
-#endif
+#include <GL/glut.h>
 
 /*
-** ‰Ÿ‚µo‚µŒ`ó
+** æŠ¼ã—å‡ºã—å½¢çŠ¶
 */
 #include "extrusion.h"
 
-/* ² */
+/* è»¸ */
 static double spine[][3] = {
   { 0.0, 0.0, 0.0 },
   { 0.0, 1.0, 0.0 },
@@ -27,7 +17,7 @@ static double spine[][3] = {
 };
 #define NS (sizeof(spine) / (sizeof(double) * 3))
 
-/* ’f–Ê*/
+/* æ–­é¢*/
 static double crossSection[][2] = {
   { -0.7, -0.7 },
   {  0.7, -0.7 },
@@ -41,62 +31,62 @@ static double crossSection[][2] = {
 };
 #define NC (sizeof(crossSection) / (sizeof(double) * 2))
 
-/* •¨‘Ì‚ÌF */
-static GLfloat red[] = { 0.8, 0.2, 0.2, 1.0 };
+/* ç‰©ä½“ã®è‰² */
+static GLfloat red[] = { 0.8f, 0.2f, 0.2f, 1.0f };
 
 /*
-** ƒgƒ‰ƒbƒNƒ{[ƒ‹
+** ãƒˆãƒ©ãƒƒã‚¯ãƒœãƒ¼ãƒ«
 */
 #include "quaternion.h"
 
-/* ƒhƒ‰ƒbƒOŠJnˆÊ’u */
+/* ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ä½ç½® */
 static int cx, cy;
 
-/* ƒ}ƒEƒX‚Ìâ‘ÎˆÊ’u¨ƒEƒBƒ“ƒhƒE“à‚Å‚Ì‘Š‘ÎˆÊ’u‚ÌŠ·ZŒW” */
+/* ãƒã‚¦ã‚¹ã®çµ¶å¯¾ä½ç½®â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å†…ã§ã®ç›¸å¯¾ä½ç½®ã®æ›ç®—ä¿‚æ•° */
 static double sx, sy;
 
-/* ƒ}ƒEƒX‚Ì‘Š‘ÎˆÊ’u¨‰ñ“]Šp‚ÌŠ·ZŒW” */
+/* ãƒã‚¦ã‚¹ã®ç›¸å¯¾ä½ç½®â†’å›è»¢è§’ã®æ›ç®—ä¿‚æ•° */
 #define SCALE (2.0 * 3.14159265358979323846)
 
-/* ‰ñ“]‚Ì‰Šú’l (ƒNƒH[ƒ^ƒjƒIƒ“) */
+/* å›è»¢ã®åˆæœŸå€¤ (ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³) */
 static double cq[4] = { 1.0, 0.0, 0.0, 0.0 };
 
-/* ƒhƒ‰ƒbƒO’†‚Ì‰ñ“] (ƒNƒH[ƒ^ƒjƒIƒ“) */
+/* ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã®å›è»¢ (ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³) */
 static double tq[4];
 
-/* ‰ñ“]‚Ì•ÏŠ·s—ñ */
+/* å›è»¢ã®å¤‰æ›è¡Œåˆ— */
 static double rt[16];
 
 /*
-** ‚»‚Ì‘¼İ’è
+** ãã®ä»–è¨­å®š
 */
 
-/* ŒõŒ¹‚ÌˆÊ’u */
+/* å…‰æºã®ä½ç½® */
 static GLfloat pos[] = { 0.0, 0.0, 1.0, 0.0 };
 
-/* ‹“_‚ÌˆÊ’u */
+/* è¦–ç‚¹ã®ä½ç½® */
 static GLdouble ex = 0.0, ey = 0.0, ez = 10.0;
 
-/* –Ú•W“_‚ÌˆÊ’u */
+/* ç›®æ¨™ç‚¹ã®ä½ç½® */
 static GLdouble tx = 0.0, ty = 0.0, tz = 0.0;
 
 void display(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  /* ƒ‚ƒfƒ‹ƒrƒ…[•ÏŠ·s—ñ‚Ì‰Šú‰» */
+  /* ãƒ¢ãƒ‡ãƒ«ãƒ“ãƒ¥ãƒ¼å¤‰æ›è¡Œåˆ—ã®åˆæœŸåŒ– */
   glLoadIdentity();
 
-  /* ‹“_‚ÌˆÚ“® */
+  /* è¦–ç‚¹ã®ç§»å‹• */
   gluLookAt(ex, ey, ez, tx, ty, tz, 0.0, 1.0, 0.0);
 
-  /* ŒõŒ¹‚ÌˆÊ’u‚ğİ’è */
+  /* å…‰æºã®ä½ç½®ã‚’è¨­å®š */
   glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-  /* ‰ñ“] */
+  /* å›è»¢ */
   glMultMatrixd(rt);
 
-  /* •`‰æ */
+  /* æç”» */
   glMaterialfv(GL_FRONT, GL_DIFFUSE, red);
   extrusion(crossSection, NC, spine, NS);
 
@@ -105,21 +95,21 @@ void display(void)
 
 void resize(int w, int h)
 {
-  /* ƒ}ƒEƒXƒ|ƒCƒ“ƒ^ˆÊ’u‚ÌƒEƒBƒ“ƒhƒE“à‚Ì‘Š‘Î“IˆÊ’u‚Ö‚ÌŠ·Z—p */
+  /* ãƒã‚¦ã‚¹ãƒã‚¤ãƒ³ã‚¿ä½ç½®ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å†…ã®ç›¸å¯¾çš„ä½ç½®ã¸ã®æ›ç®—ç”¨ */
   sx = 1.0 / (double)w;
   sy = 1.0 / (double)h;
 
-  /* ƒEƒBƒ“ƒhƒE‘S‘Ì‚ğƒrƒ…[ƒ|[ƒg‚É‚·‚é */
+  /* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å…¨ä½“ã‚’ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã«ã™ã‚‹ */
   glViewport(0, 0, w, h);
 
-  /* “§‹•ÏŠ·s—ñ‚Ìw’è */
+  /* é€è¦–å¤‰æ›è¡Œåˆ—ã®æŒ‡å®š */
   glMatrixMode(GL_PROJECTION);
 
-  /* “§‹•ÏŠ·s—ñ‚Ì‰Šú‰» */
+  /* é€è¦–å¤‰æ›è¡Œåˆ—ã®åˆæœŸåŒ– */
   glLoadIdentity();
   gluPerspective(30.0, (double)w / (double)h, 1.0, 100.0);
 
-  /* ƒ‚ƒfƒ‹ƒrƒ…[•ÏŠ·s—ñ‚Ìw’è */
+  /* ãƒ¢ãƒ‡ãƒ«ãƒ“ãƒ¥ãƒ¼å¤‰æ›è¡Œåˆ—ã®æŒ‡å®š */
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -134,16 +124,16 @@ void mouse(int button, int state, int x, int y)
   case GLUT_LEFT_BUTTON:
     switch (state) {
     case GLUT_DOWN:
-      /* ƒhƒ‰ƒbƒOŠJn“_‚ğ‹L˜^ */
+      /* ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ç‚¹ã‚’è¨˜éŒ² */
       cx = x;
       cy = y;
-      /* ƒAƒjƒ[ƒVƒ‡ƒ“ŠJn */
+      /* ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–‹å§‹ */
       glutIdleFunc(idle);
       break;
     case GLUT_UP:
-      /* ƒAƒjƒ[ƒVƒ‡ƒ“I—¹ */
+      /* ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº† */
       glutIdleFunc(0);
-      /* ‰ñ“]‚Ì•Û‘¶ */
+      /* å›è»¢ã®ä¿å­˜ */
       cq[0] = tq[0];
       cq[1] = tq[1];
       cq[2] = tq[2];
@@ -162,11 +152,11 @@ void motion(int x, int y)
 {
   double dx, dy, a;
 
-  /* ƒ}ƒEƒXƒ|ƒCƒ“ƒ^‚ÌˆÊ’u‚Ìƒhƒ‰ƒbƒOŠJnˆÊ’u‚©‚ç‚Ì•ÏˆÊ */
+  /* ãƒã‚¦ã‚¹ãƒã‚¤ãƒ³ã‚¿ã®ä½ç½®ã®ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ä½ç½®ã‹ã‚‰ã®å¤‰ä½ */
   dx = (x - cx) * sx;
   dy = (y - cy) * sy;
 
-  /* ƒ}ƒEƒXƒ|ƒCƒ“ƒ^‚ÌˆÊ’u‚Ìƒhƒ‰ƒbƒOŠJnˆÊ’u‚©‚ç‚Ì‹——£ */
+  /* ãƒã‚¦ã‚¹ãƒã‚¤ãƒ³ã‚¿ã®ä½ç½®ã®ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ä½ç½®ã‹ã‚‰ã®è·é›¢ */
   a = sqrt(dx * dx + dy * dy);
 
   if (a != 0.0) {
@@ -174,16 +164,16 @@ void motion(int x, int y)
     double as = sin(ar) / a;
     double dq[4] = { cos(ar), dy * as, dx * as, 0.0 };
     
-    /* ƒNƒH[ƒ^ƒjƒIƒ“‚ğŠ|‚¯‚Ä‰ñ“]‚ğ‡¬ */
+    /* ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’æ›ã‘ã¦å›è»¢ã‚’åˆæˆ */
     qmul(tq, dq, cq);
-    /* ƒNƒH[ƒ^ƒjƒIƒ“‚©‚ç‰ñ“]‚Ì•ÏŠ·s—ñ‚ğ‹‚ß‚é */
+    /* ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰å›è»¢ã®å¤‰æ›è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹ */
     qrot(rt, tq);
   }
 }
 
 void keyboard(unsigned char key, int x, int y)
 {
-  /* q, Q ‚ ‚é‚¢‚Í ESC ‚ğƒ^ƒCƒv‚µ‚½‚çI—¹ */
+  /* q, Q ã‚ã‚‹ã„ã¯ ESC ã‚’ã‚¿ã‚¤ãƒ—ã—ãŸã‚‰çµ‚äº† */
   switch (key) {
   case 'q':
   case 'Q':
@@ -194,14 +184,14 @@ void keyboard(unsigned char key, int x, int y)
 
 void init(void)
 {
-  /* ‰Šúİ’è */
+  /* åˆæœŸè¨­å®š */
   glClearColor(1.0, 1.0, 1.0, 0.0);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
-  /* ‰ñ“]s—ñ‚Ì‰Šú‰» */
+  /* å›è»¢è¡Œåˆ—ã®åˆæœŸåŒ– */
   qrot(rt, cq);
 }
 

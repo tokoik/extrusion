@@ -1,10 +1,10 @@
-#ifndef EXTRUSION_H
+ï»¿#ifndef EXTRUSION_H
 #define EXTRUSION_H
 
-/* ‰Ÿ‚µo‚µ */
+/* æŠ¼ã—å‡ºã— */
 extern void extrusion(const double [][2], int, const double [][3], int);
 
-/* CROSS SECTION ‚Ìƒ|ƒCƒ“ƒg” */
+/* CROSS SECTION ã®ãƒã‚¤ãƒ³ãƒˆæ•° */
 #define MAXCS 100
 
 #endif

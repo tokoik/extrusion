@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** r <- p + q
 */
 void qadd(double r[], const double p[], const double q[])
@@ -32,7 +32,7 @@ void qmul(double r[], const double p[], const double q[])
 }
 
 /*
-** ‰ñ“]•ÏŠ·s—ñ r <- ƒNƒH[ƒ^ƒjƒIƒ“ q
+** å›žè»¢å¤‰æ›è¡Œåˆ— r <- ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ q
 */
 void qrot(double r[], double q[])
 {

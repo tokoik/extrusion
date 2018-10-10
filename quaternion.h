@@ -1,10 +1,10 @@
-#ifndef QUATERNION_H
+ï»¿#ifndef QUATERNION_H
 #define QUATERNION_H
 
-/* ƒNƒH[ƒ^ƒjƒIƒ“‚ÌÏ */
+/* ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ç© */
 extern void qmul(double [], const double [], const double []);
 
-/* ƒNƒH[ƒ^ƒjƒIƒ“¨‰ñ“]‚Ì•ÏŠ·s—ñ */
+/* ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³â†’å›è»¢ã®å¤‰æ›è¡Œåˆ— */
 extern void qrot(double [], double []);
 
 #endif
