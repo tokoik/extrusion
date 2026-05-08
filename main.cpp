@@ -70,7 +70,7 @@ static GLdouble ex = 0.0, ey = 0.0, ez = 10.0;
 /* 目標点の位置 */
 static GLdouble tx = 0.0, ty = 0.0, tz = 0.0;
 
-void display(void)
+void display()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -113,7 +113,7 @@ void resize(int w, int h)
   glMatrixMode(GL_MODELVIEW);
 }
 
-void idle(void)
+void idle()
 {
   glutPostRedisplay();
 }
@@ -182,7 +182,7 @@ void keyboard(unsigned char key, int x, int y)
   }
 }
 
-void init(void)
+void init()
 {
   /* 初期設定 */
   glClearColor(1.0, 1.0, 1.0, 0.0);
