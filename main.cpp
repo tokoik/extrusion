@@ -1,6 +1,15 @@
-﻿#include <math.h>
+﻿#if defined(__APPLE__) || defined(MACOSX)
+#  define GL_SILENCE_DEPRECATION
+#  include <GLUT/glut.h>
+#else
+#  if defined(_WIN32)
+#    define _USE_MATH_DEFINES
+#    define _CRT_SECURE_NO_WARNINGS
+#  endif
+#  include <GL/glut.h>
+#endif
+#include <math.h>
 #include <stdlib.h>
-#include <GL/glut.h>
 
 /*
 ** 押し出し形状

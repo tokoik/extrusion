@@ -82,16 +82,18 @@ elseif(WIN32)
   )
 
 else()
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(FREEGLUT REQUIRED IMPORTED_TARGET glut)
-
   add_executable(extrusion
     ${EXTRUSION_SOURCES}
     ${EXTRUSION_HEADERS}
   )
 
+  find_package(OpenGL REQUIRED)
+  find_package(GLUT REQUIRED)
+
   target_link_libraries(extrusion PRIVATE
-    PkgConfig::FREEGLUT
+    OpenGL::GL
+    OpenGL::GLU
+    GLUT::GLUT
     m
   )
 endif()

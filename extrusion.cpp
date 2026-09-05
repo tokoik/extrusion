@@ -14,6 +14,9 @@
 //#    pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 #  endif
 #endif
+#if !defined(CALLBACK)
+#  define CALLBACK
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
