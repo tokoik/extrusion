@@ -35,10 +35,25 @@ if(APPLE)
   )
 
   set_target_properties(extrusion PROPERTIES
+    MACOSX_BUNDLE TRUE
     MACOSX_BUNDLE_BUNDLE_NAME extrusion
-    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.extrusion
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.extrusion"
+    MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+    MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2026 Kohe Tokoi. All rights reserved."
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.yourcompany.extrusion"
     XCODE_ATTRIBUTE_PRODUCT_NAME extrusion
+    XCODE_GENERATE_SCHEME ON
+    XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
+
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist")
+    set_target_properties(extrusion PROPERTIES
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
+    )
+  endif()
+
+  set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY XCODE_GENERATE_SCHEME ON)
 
 elseif(WIN32)
   include(FetchContent)
